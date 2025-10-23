@@ -1,50 +1,25 @@
 <div align="center">
 
-
-
-
-
-
 [S<sup>2</sup>M<sup>2</sup>: Scalable Stereo Matching Model for Reliable Depth Estimation]
 
 Junhong Min¹<sup>,</sup>*, Youngpil Jeon¹, Jimin Kim¹, Minyong Choi¹
 
-
-
-
-
 ¹Samsung Electronics
-
-
-
-
 
 *Corresponding Author
 
-
-
-
-
-
-
 International Conference on Computer Vision (ICCV) 2025
-
-
-
 
 <p align="center">
 <!--
 "style=for-the-badge"는 크고 모던한 스타일의 배지를 만듭니다.
 "logo=" 부분에 원하는 아이콘 이름을 넣을 수 있습니다.
 -->
-<a href="https://arxiv.org/abs/2507.13229" target="_blank">
+<a href="https://arxiv.org/abs/2507.13229">
 <img alt="Paper (ArXiv)" src="https://www.google.com/search?q=https://img.shields.io/badge/Paper-ArXiv-b31b1b%3Fstyle%3Dfor-the-badge%26logo%3Darxiv">
 </a>
-<a href="https://www.google.com/url?sa=E&source=gmail&q=https://junhong-3dv.github.io/s2m2-project" target="_blank">
+<a href="https://junhong-3dv.github.io/s2m2-project">
 <img alt="Project Page" src="https://www.google.com/search?q=https://img.shields.io/badge/Project-Page-brightgreen%3Fstyle%3Dfor-the-badge%26logo%3Dgooglechrome">
-</a>
-<a href="https://github.com/junhong-3dv/s2m2" target="_blank">
-<img alt="Code (GitHub)" src="https://www.google.com/search?q=https://img.shields.io/badge/Code-GitHub-181717%3Fstyle%3Dfor-the-badge%26logo%3Dgithub">
 </a>
 </p>
 
