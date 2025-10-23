@@ -7,10 +7,6 @@
 
 [S<sup>2</sup>M<sup>2</sup>: Scalable Stereo Matching Model for Reliable Depth Estimation]
 
-<p align="center">
-<img src="fig/thumbnail.png" width="90%"/>
-</p>
-
 Junhong Min¹<sup>,</sup>*, Youngpil Jeon¹, Jimin Kim¹, Minyong Choi¹
 
 
@@ -36,18 +32,15 @@ International Conference on Computer Vision (ICCV) 2025
 
 
 
-
-
 <p align="center">
 <!--
 "style=for-the-badge"는 크고 모던한 스타일의 배지를 만듭니다.
 "logo=" 부분에 원하는 아이콘 이름을 넣을 수 있습니다.
-"https://[username].github.io/[repo-name]" 부분은 실제 프로젝트 페이지 주소로 수정하세요.
 -->
 <a href="https://arxiv.org/abs/2507.13229" target="_blank">
 <img alt="Paper (ArXiv)" src="https://www.google.com/search?q=https://img.shields.io/badge/Paper-ArXiv-b31b1b%3Fstyle%3Dfor-the-badge%26logo%3Darxiv">
 </a>
-<a href="https://www.google.com/search?q=https://junhong-3dv.github.io/s2m2" target="_blank">
+<a href="https://www.google.com/url?sa=E&source=gmail&q=https://junhong-3dv.github.io/s2m2-project" target="_blank">
 <img alt="Project Page" src="https://www.google.com/search?q=https://img.shields.io/badge/Project-Page-brightgreen%3Fstyle%3Dfor-the-badge%26logo%3Dgooglechrome">
 </a>
 <a href="https://github.com/junhong-3dv/s2m2" target="_blank">
@@ -55,9 +48,9 @@ International Conference on Computer Vision (ICCV) 2025
 </a>
 </p>
 
-
-
-
+<p align="center">
+<img src="fig/thumbnail.png" width="90%"/>
+</p>
 
 </div>
 
@@ -93,17 +86,11 @@ Code
 
 📌 Implementation Note
 
-The implementation in this repository is slightly different from the model described in the original paper. 
+The implementation in this repository is slightly different from the model described in the original paper.
 
+The attention based global refinement module which contains dynamic operations was replaced by a simple unet for stable onnx export.
 
-
-The attention based global refinement module which contains dynamic operations was replaced by a simple unet for stable onnx export. 
-
-
-
-The training dataset was slightly extended to include additional samples containing transparent objects. 
-
-
+The training dataset was slightly extended to include additional samples containing transparent objects.
 
 The original paper provides S, L, XL models. This repository also includes additional variant M
 
@@ -113,18 +100,13 @@ The original paper provides S, L, XL models. This repository also includes addit
 <img src="fig/overview.png" width="90%"/>
 </p>
 
-
-
-
 🚀 Performance
 
 (Detailed benchmark results and visualizations are available on our Project Page.)
 
 Inference Speed (fps) Comparison
 
-Nvidia 4090 + float16 + torch.compile + refine_iter=3 
-
-
+Nvidia 4090 + float16 + torch.compile + refine_iter=3
 
 Model
 
@@ -192,7 +174,7 @@ The codebase is developed and tested with Python 3.10 and PyTorch 2.4+. We recom
 
 Clone the repository:
 
-git clone [https://github.sec.samsung.net/junhong1-min/s2m2.git](https://github.sec.samsung.net/junhong1-min/s2m2.git)
+git clone [https://github.com/junhong-3dv/s2m2.git](https://github.com/junhong-3dv/s2m2.git)
 cd s2m2
 
 
