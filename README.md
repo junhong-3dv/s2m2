@@ -104,8 +104,7 @@ mkdir pretrain_weights
 To generate a result for a single input, run `visualize_2d_simple.py`.
 
 ```bash
-python visualize_2d_simple.py --model_type XL \
-               --num_refine 3 
+python visualize_2d_simple.py --model_type XL --num_refine 3 
 ```
 | Arg | default | type | help |
 | :---: | :---: | :--: | :--: |
