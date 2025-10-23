@@ -125,11 +125,11 @@ python visualize_3d_booster.py --model_type L
 📜 Citation
 
 If you find our work useful for your research, please consider citing our paper:
-
+```bibtex
 @inproceedings{min2025s2m2,
   title={{S\textsuperscript{2}M\textsuperscript{2}}: Scalable Stereo Matching Model for Reliable Depth Estimation},
   author={Junhong Min and Youngpil Jeon and Jimin Kim and Minyong Choi},
   booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
   year={2025}
 }
-
+```
