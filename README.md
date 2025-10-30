@@ -38,6 +38,7 @@
 - State-of-the-art performance on ETH3D (1st), Middlebury V3 (1st), and Booster (1st)
 - Joint estimation of disparity, occlusion, and confidence
 - Supports negative disparity estimation
+- Optimal under the pinhole camera model with ideal stereo rectification (vertical disparity < 2px)
 
 ### ⚙️ Code
 
@@ -46,7 +47,7 @@
 - ✅ TorchScript export  
 - ❌ Training pipeline (not included)
 
-> Note: This implementation replaces the dynamic attention-based refinement module with a lightweight UNet for stable ONNX export. It also includes an additional M variant and extended training data with transparent objects.
+> Note: This implementation replaces the dynamic attention-based refinement module with an UNet for stable ONNX export. It also includes an additional M variant and extended training data with transparent objects. 
 
 ---
 
