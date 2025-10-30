@@ -25,7 +25,6 @@
 
 ## 🤗 Notice
 
->The pre-trained models will be released by **end of October 2025**. Stay tuned!  
 >This repository and its contents are **not related to any official Samsung Electronics products**.  
 >All resources are provided **solely for non-commercial research and education purposes**.  
 ---
@@ -97,10 +96,10 @@ mkdir pretrain_weights
 
 | Model | Download | Model Size |
 | :---: | :---: | :--: |
-| **S** | [download(https://huggingface.co/minimok/s2m2/resolve/main/CH128NTR1.pth)] | 26.5M | 
-| **M** | [download] | 80.4M | 
-| **L** | [download(https://huggingface.co/minimok/s2m2/resolve/main/CH256NTR3.pth)] | 181M | 
-| **XL**| [download](https://huggingface.co/minimok/s2m2/resolve/main/CH384NTR3.pth) | 406M | 
+| **S** | [Download](https://huggingface.co/minimok/s2m2/resolve/main/CH128NTR1.pth) | 26.5M | 
+| **M** | [-] | 80.4M | 
+| **L** | [Download](https://huggingface.co/minimok/s2m2/resolve/main/CH256NTR3.pth) | 181M | 
+| **XL**| [Download](https://huggingface.co/minimok/s2m2/resolve/main/CH384NTR3.pth) | 406M | 
 
 ### 2. Run Basic Demo
 To generate a result for a single input, run `visualize_2d_simple.py`.
