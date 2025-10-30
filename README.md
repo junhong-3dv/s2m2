@@ -26,8 +26,8 @@
 ## 🤗 Notice
 
 >The pre-trained models will be released by **end of October 2025**. Stay tuned!  
->This repository and its contents are not related to any official Samsung Electronics products.  
->All resources are provided solely for non-commercial research and education purposes  
+>This repository and its contents are **not related to any official Samsung Electronics products**.  
+>All resources are provided **solely for non-commercial research and education purposes**.  
 ---
 
 ## ✨ Key Features
