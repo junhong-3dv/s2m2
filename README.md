@@ -97,10 +97,10 @@ mkdir pretrain_weights
 
 | Model | Download | Model Size |
 | :---: | :---: | :--: |
-| **S** | [download] | 26.5M | 
+| **S** | [download(https://huggingface.co/minimok/s2m2/resolve/main/CH128NTR1.pth)] | 26.5M | 
 | **M** | [download] | 80.4M | 
-| **L** | [download] | 181M | 
-| **XL**| [download] | 406M | 
+| **L** | [download(https://huggingface.co/minimok/s2m2/resolve/main/CH256NTR3.pth)] | 181M | 
+| **XL**| [download(https://huggingface.co/minimok/s2m2/resolve/main/CH384NTR3.pth)] | 406M | 
 
 ### 2. Run Basic Demo
 To generate a result for a single input, run `visualize_2d_simple.py`.
