@@ -107,7 +107,7 @@ To generate a result for a single input, run `visualize_2d_simple.py`.
 ```bash
 python visualize_2d_simple.py --model_type XL --num_refine 3 
 ```
-| Arg | default | type | help |
+| arg | default | type | help |
 | :---: | :---: | :--: | :--: |
 | --model_type | 'XL' | str | select model type: [S,M,L,XL] |
 | --num_refine | 3 | int | number of local iterative refinement |
