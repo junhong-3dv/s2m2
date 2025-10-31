@@ -75,7 +75,7 @@ Inference Speed (FPS)** on **NVIDIA RTX 4090 (float16 + `torch.compile` + `refin
 
 ## 🔧 Installation
 
-We recommend using Python 3.10 and PyTorch 2.4+ with Anaconda.
+We recommend using Python 3.10 and PyTorch 2.7+ with Anaconda.
 
 ```bash
 git clone https://github.com/junhong-3dv/s2m2.git
@@ -84,6 +84,15 @@ cd s2m2
 conda env create -n s2m2 -f environment.yml
 conda activate s2m2
 ```
+
+
+If the environment setup via .yml doesn’t work smoothly,
+you can manually install the main dependencies with:
+
+pip install torch torchvision opencv-python open3d onnx onnxruntime-gpu
+
+That should cover most of the required packages for running the demo.
+
 ## 🚀 Pre-trained Models and Inference
 
 ### 1. Download Pre-trained Models
