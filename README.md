@@ -81,7 +81,7 @@ We recommend using Python 3.10 and PyTorch 2.4+ with Anaconda.
 git clone https://github.com/junhong-3dv/s2m2.git
 cd s2m2
 
-conda env create -f environment.yml
+conda env create -n s2m2 -f environment.yml
 conda activate s2m2
 ```
 ## 🚀 Pre-trained Models and Inference
