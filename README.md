@@ -41,7 +41,8 @@
 
 ### ⚙️ Code
 
-- ✅ FP16 / FP32 inference  
+- ✅ FP16 / FP32 inference
+- ❌ bFP16 
 - ✅ ONNX export  
 - ✅ TorchScript export  
 - ❌ Training pipeline (not included)
