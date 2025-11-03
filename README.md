@@ -131,6 +131,11 @@ To visualize the 3D output interactively, run `visualize_3d_booster.py` or `visu
 ```bash
 python visualize_3d_booster.py --model_type L 
 ```
+For 'visualize_3d_middlebury.py --model_type XL ', result should be like below. 
+<p align="center">
+  <img src="fig/result_bicycle2.png" width="90%">
+</p>
+If you failed to reproduce this, let me know. 
 
 📜 Citation
 
