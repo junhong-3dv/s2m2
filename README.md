@@ -26,7 +26,9 @@
 ## 🤗 Notice
 
 >This repository and its contents are **not related to any official Samsung Electronics products**.  
->All resources are provided **solely for non-commercial research and education purposes**.  
+>All resources are provided **solely for non-commercial research and education purposes**.
+>
+>A bug in 2d_simple_demo is fixed. model should run with float16/32 not bfloat16.
 ---
 
 ## ✨ Key Features
