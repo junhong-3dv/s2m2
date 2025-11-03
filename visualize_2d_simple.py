@@ -100,7 +100,7 @@ def main(args):
 
 
     with torch.no_grad():
-        with torch.amp.autocast(enabled=True, device_type=device.type, dtype=torch.bfloat16):
+        with torch.amp.autocast(enabled=True, device_type=device.type, dtype=torch.float16):
             print(f"pre-run...")
             _ = model(left_torch, right_torch)
             T = 1
