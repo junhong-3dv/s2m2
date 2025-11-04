@@ -28,7 +28,6 @@
 >This repository and its contents are **not related to any official Samsung Electronics products**.  
 >All resources are provided **solely for non-commercial research and education purposes**.
 >
->A bug in 2d_simple_demo is fixed. The model should be run in float16 or float32. bfloat16 is not supported.
 ---
 
 ## ✨ Key Features
