@@ -44,7 +44,7 @@
 
 - ✅ FP16 / FP32 inference
 - ❌ bFP16 
-- ✅ ONNX export  
+- ⚠️ ONNX/TensorRT export (we are fixing the conversion issue) 
 - ✅ TorchScript export  
 - ❌ Training pipeline (not included)
 
