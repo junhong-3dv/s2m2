@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from torch import Tensor
 from .utils import bilinear_sampler
 
-
 class CostVolume():
     """
     cost volume for iterative refinemtns
@@ -41,7 +40,6 @@ class CostVolume():
 
         return corrs, corrs_2x
 
-
 class CNNEncoder(nn.Module):
     """
     init convolution neural networks for feature extraction
@@ -52,9 +50,11 @@ class CNNEncoder(nn.Module):
         self.conv0 = nn.Sequential(nn.Conv2d(3, 16, kernel_size=1),
                                    nn.GELU(),
                                    nn.Conv2d(16, 16, kernel_size=1))
+
         self.conv1_down = nn.Sequential(nn.Conv2d(16, 64, kernel_size=5, stride=2, padding=2),
                                         nn.GELU(),
-                                        nn.Conv2d(64, output_dim, kernel_size=3, stride=1, padding=1))
+                                        nn.Conv2d(64, output_dim, kernel_size=3, stride=1, padding=1)
+        )
 
 
         self.norm1 = nn.GroupNorm(8, output_dim)
@@ -66,7 +66,7 @@ class CNNEncoder(nn.Module):
         self.conv2_down = nn.Sequential(nn.Conv2d(output_dim, output_dim, kernel_size=3, stride=2, padding=1))
 
     def forward(self, x: torch.Tensor):
-        x = (self.conv0(x))
+        x = self.conv0(x)
         x_2x = self.norm1(self.conv1_down(x))
         x_2x = self.conv2(x_2x) + x_2x
         x_4x = self.conv2_down(x_2x)
@@ -124,6 +124,12 @@ class UpsampleMask1x(nn.Module):
 
         return mask
 
+def logsumexp_stable(x, dim, keepdim=False, eps=1e-30):
+    # LSE = m + log(sum(exp(x-m)))
+    m, _ = x.max(dim=dim, keepdim=True)        # ReduceMax
+    y = (x - m).exp().sum(dim=dim, keepdim=True)  # Exp + ReduceSum
+    y = m + torch.log(torch.clamp(y, min=eps))    # Log + Add
+    return y if keepdim else y.squeeze(dim)
 
 class DispInit(nn.Module):
     """
@@ -141,13 +147,15 @@ class DispInit(nn.Module):
         self.use_positivity = use_positivity
 
     def _sinkhorn(self, attn: torch.Tensor, log_mu: torch.Tensor, log_nu: torch.Tensor):
-        v = log_nu - torch.logsumexp((attn), dim=2)
-        u = log_mu - torch.logsumexp((attn + v.unsqueeze(2)), dim=3)
-
+        # v = log_nu - torch.logsumexp((attn), dim=2,)
+        # u = log_mu - torch.logsumexp((attn + v.unsqueeze(2)), dim=3)
+        v = log_nu - logsumexp_stable((attn), dim=2,)
+        u = log_mu - logsumexp_stable((attn + v.unsqueeze(2)), dim=3)
         for idx in range(self.ot_iter - 1):
-            v = log_nu - torch.logsumexp((attn + u.unsqueeze(3)), dim=2)
-            u = log_mu - torch.logsumexp((attn + v.unsqueeze(2)), dim=3)
-
+            v = log_nu - logsumexp_stable((attn + u.unsqueeze(3)), dim=2)
+            u = log_mu - logsumexp_stable((attn + v.unsqueeze(2)), dim=3)
+            # v = log_nu - torch.logsumexp((attn + u.unsqueeze(3)), dim=2)
+            # u = log_mu - torch.logsumexp((attn + v.unsqueeze(2)), dim=3)
         out = (attn + u.unsqueeze(3) + v.unsqueeze(2))
 
         return out
@@ -192,26 +200,28 @@ class DispInit(nn.Module):
         cv_down = torch.einsum('...chi,...chj -> ...hij', feature0_down, feature1_down).to(dtype)
 
 
-        cv_mask = cv.masked_fill(mask, -torch.inf)
+        # cv_mask = cv.masked_fill(mask, -torch.inf)
+        cv_mask = cv.masked_fill(mask, -1e4)
         prob = self._optimal_transport(cv_mask)
         masked_prob = prob.masked_fill(mask, 0)
 
         # estimate hard disparity
-        prob_max_ind = (masked_prob).max(dim=-1)[1].unsqueeze(3)
+        prob_max_ind = masked_prob.argmax(dim=3)
+        prob_max_ind = prob_max_ind.unsqueeze(3)
         prob_l = 2
         p1d = (prob_l, prob_l)  # pad last dim by 1 on each side
         masked_prob_pad = F.pad(masked_prob, p1d, "constant", 0)
         conf = 0
         correspondence_left = 0
         for idx in range(2 * prob_l + 1):
-            weight = torch.gather(masked_prob_pad, index=prob_max_ind + idx, dim=-1)
+            weight = torch.gather(masked_prob_pad, index=prob_max_ind + idx, dim=3)
             conf += weight
             correspondence_left += weight * (prob_max_ind + idx - prob_l)
         eps = 1e-4
         correspondence_left = (correspondence_left + eps) / (conf + eps)
         disparity = (x_grid.reshape(1, 1, w) - correspondence_left.squeeze(3)).unsqueeze(1)
         conf = conf.unsqueeze(1).squeeze(-1)
-        occ = masked_prob.sum(dim=-1).unsqueeze(1)
+        occ = masked_prob.sum(dim=3).unsqueeze(1)
 
         return disparity, conf, occ, cv, cv_down
 
