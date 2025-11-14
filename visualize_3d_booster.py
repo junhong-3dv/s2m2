@@ -84,7 +84,7 @@ def get_pointcloud(rgb, disp, calib):
     rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(rgb,
                                                               depth,
                                                               depth_scale=1000.0,
-                                                              depth_trunc=1000.0,
+                                                              depth_trunc=10.0,
                                                               convert_rgb_to_intensity=False)
     intrinsic = o3d.camera.PinholeCameraIntrinsic(w, h, fx, fx, cx, cy)
     point_cloud = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd, intrinsic)

@@ -9,19 +9,19 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 from model.s2m2 import S2M2 as Model
 torch.backends.cudnn.benchmark = True
-torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision('highest')
 
 def get_args_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--model_type', default='S', type=str,
                         help='select model type: S,M,L,XL')
-    parser.add_argument('--num_refine', default=1, type=int,
+    parser.add_argument('--num_refine', default=3, type=int,
                         help='number of local iterative refinement')
     parser.add_argument('--allow_negative', action='store_true', help='allow negative disparity for imperfect rectification')
-    parser.add_argument('--img_height', default=512, type=int,
+    parser.add_argument('--img_height', default=1088, type=int,
                         help='image height')
-    parser.add_argument('--img_width', default=512, type=int,
+    parser.add_argument('--img_width', default=800, type=int,
                         help='image width')
 
     return parser
@@ -88,12 +88,13 @@ def main(args):
     img_width = (img_width // 32) * 32
     print(f"image size: {img_height}, {img_width}")
 
+    left = left[:img_height, :img_width]
+    right = right[:img_height, :img_width]
+    # left = cv2.resize(left, dsize=(img_width, img_height))
+    # right = cv2.resize(right, dsize=(img_width, img_height))
 
-    left = cv2.resize(left, dsize=(img_width, img_height))
-    right = cv2.resize(right, dsize=(img_width, img_height))
-
-    left_torch = (torch.from_numpy(left).permute(-1, 0, 1).unsqueeze(0)).half().to(device)
-    right_torch = (torch.from_numpy(right).permute(-1, 0, 1).unsqueeze(0)).half().to(device)
+    left_torch = (torch.from_numpy(left).permute(-1, 0, 1).unsqueeze(0)).to(device)
+    right_torch = (torch.from_numpy(right).permute(-1, 0, 1).unsqueeze(0)).to(device)
 
     torch_version = torch.__version__
     # onnx_path = f'S2M2_{args.model_type}_{img_width}_{img_height}_v2_torch{torch_version[0]}{torch_version[2]}.onnx'
@@ -103,8 +104,8 @@ def main(args):
     os.makedirs(os.path.dirname(onnx_path), exist_ok=True)
 
 
-    model = model.half().cpu()
-    left_torch, right_torch = left_torch.half().cpu(), right_torch.half().cpu()
+    model = model.cpu()
+    left_torch, right_torch = left_torch.cpu(), right_torch.cpu()
 
     print(f"ONNX conversion takes a long time, even for small model")
     try:
@@ -112,9 +113,9 @@ def main(args):
                           (left_torch, right_torch),
                           onnx_path,
                           export_params=True,
-                          opset_version=17,
-                          verbose=False,
-                          do_constant_folding=True,
+                          opset_version=19,
+                          verbose=True,
+                          do_constant_folding=False,
                           input_names=['input_left', 'input_right'],
                           output_names=['output_disp', 'output_occ', 'output_conf'],
                           dynamic_axes=None)

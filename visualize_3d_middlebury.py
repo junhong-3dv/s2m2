@@ -16,8 +16,7 @@ import math
 device='cuda'
 import torch._dynamo
 torch._dynamo.config.verbose=True
-torch.backends.cudnn.benchmark = True
-torch.set_float32_matmul_precision('high')
+torch.backends.cudnn.benchmark=True
 torch.manual_seed(0)
 torch.cuda.manual_seed(0)
 np.random.seed(0)
@@ -26,7 +25,7 @@ np.random.seed(0)
 def get_args_parser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--model_type', default='S', type=str,
+    parser.add_argument('--model_type', default='XL', type=str,
                         help='select model type: S,M,L,XL')
     parser.add_argument('--num_refine', default=5, type=int,
                         help='number of local iterative refinement')
@@ -84,7 +83,7 @@ def get_pointcloud(rgb, disp, calib):
     rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(rgb,
                                                               depth,
                                                               depth_scale=1000.0,
-                                                              depth_trunc=1000.0,
+                                                              depth_trunc=10.0,
                                                               convert_rgb_to_intensity=False)
     intrinsic = o3d.camera.PinholeCameraIntrinsic(w, h, fx, fx, cx, cy)
     point_cloud = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd, intrinsic)
@@ -271,7 +270,8 @@ def main(args):
     vis.run()
     vis.destroy_window()
 
-
+    cv2.imwrite('result.png', disp_left_vis)
+    cv2.imwrite('result_mask.png', disp_left_vis_mask)
 
     cv2.namedWindow('left-right', cv2.WINDOW_NORMAL)
     cv2.imshow('left-right', np.hstack((left, right)))

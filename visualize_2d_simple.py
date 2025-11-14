@@ -12,7 +12,7 @@ torch.set_float32_matmul_precision('high')
 def get_args_parser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--model_type', default='S', type=str,
+    parser.add_argument('--model_type', default='L', type=str,
                         help='select model type: S,M,L,XL')
     parser.add_argument('--num_refine', default=3, type=int,
                         help='number of local iterative refinement')
@@ -100,7 +100,7 @@ def main(args):
 
 
     with torch.no_grad():
-        with torch.amp.autocast(enabled=True, device_type=device.type, dtype=torch.float16):
+        with torch.amp.autocast(enabled=True, device_type=device.type, dtype=torch.bfloat16):
             print(f"pre-run...")
             _ = model(left_torch, right_torch)
             T = 1
