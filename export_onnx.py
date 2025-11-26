@@ -41,7 +41,7 @@ def load_model(args):
         feature_channels = 384
         n_transformer = 1*3
     else:
-        print('model type should be one of [XS, S, M, L, XL]')
+        print('model type should be one of [S, M, L, XL]')
         exit(1)
 
 
