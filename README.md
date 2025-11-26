@@ -44,7 +44,7 @@
 
 - ✅ FP16 / FP32 inference
 - ❌ bFP16 
-- ⚠️ ONNX/TensorRT export (we are fixing the conversion issue) 
+- ✅ ONNX/TensorRT export
 - ✅ TorchScript export  
 - ❌ Training pipeline (not included)
 
@@ -64,20 +64,89 @@
 
 > Detailed benchmark results and visualizations are available on the [Project Page](https://junhong-3dv.github.io/s2m2-project).
 
-Inference Speed (FPS)** on **NVIDIA RTX 4090 (float16 + `torch.compile` + `refine_iter=3`):
+Inference Speed (FPS)** on **NVIDIA RTX 5090 (float16 + `refine_iter=3`):
 
-| Model | CH  | NTR | 640×480 | 1216×1024 | 2432×2048 |
-|-------|-----|-----|---------|-----------|-----------|
-| S     | 128 | 1   | 68.7    | 18.8      | 3.9       |
-| M     | 192 | 2   | 34.8    | 8.9       | 1.9       |
-| L     | 256 | 3   | 20.5    | 5.3       | 1.2       |
-| XL    | 384 | 3   | 11.2    | 2.7       | 0.64      |
+<table>
+    <thead>
+        <tr>
+            <th>Model</th>
+            <th>CH</th>
+            <th>NTR</th>
+            <th>Inference</th>
+            <th>640x480</th>
+            <th>1216x1024</th>
+            <th>2432x2048</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan=2>S</td>
+            <td rowspan=2>128</td>
+            <td rowspan=2>1</td>
+            <td>torch.compile</td>
+            <td>59.8</td>
+            <td>26.4</td>
+            <td>6.6</td>
+        </tr>
+        <tr>
+            <td>TensorRT</td>
+            <td>124.0</td>
+            <td>59.4</td>
+            <td>7.3</td>
+        </tr>
+        <tr>
+            <td rowspan=2>M</td>
+            <td rowspan=2>192</td>
+            <td rowspan=2>2</td>
+            <td>torch.compile</td>
+            <td>32.4</td>
+            <td>12.5</td>
+            <td>3.1</td>
+        </tr>
+        <tr>
+            <td>TensorRT</td>
+            <td>66.7</td>
+            <td>18.3</td>
+            <td>3.8</td>
+        </tr>
+        <tr>
+            <td rowspan=2>L</td>
+            <td rowspan=2>256</td>
+            <td rowspan=2>3</td>
+            <td>torch.compile</td>
+            <td>25.8</td>
+            <td>7.6</td>
+            <td>2.0</td>
+        </tr>
+        <tr>
+            <td>TensorRT</td>
+            <td>46.6</td>
+            <td>11.2</td>
+            <td>2.4</td>
+        </tr>
+        <tr>
+            <td rowspan=2>XL</td>
+            <td rowspan=2>384</td>
+            <td rowspan=2>3</td>
+            <td>torch.compile</td>
+            <td>16.3</td>
+            <td>4.3</td>
+            <td>1.1</td>
+        </tr>
+        <tr>
+            <td>TensorRT</td>
+            <td>26.6</td>
+            <td>6.4</td>
+            <td>1.4</td>
+        </tr>
+    </tbody>
+</table>
 
 ---
 
 ## 🔧 Installation
 
-We recommend using Python 3.10 and PyTorch 2.7+ with Anaconda.
+We recommend using Python 3.10, PyTorch 2.9, CUDA 12.9, CUDNN 9.1.0, and tensorRT 10.13.3 with Anaconda.
 
 ```bash
 git clone https://github.com/junhong-3dv/s2m2.git
@@ -91,7 +160,8 @@ conda activate s2m2
 If the environment setup via .yml doesn’t work smoothly,
 you can manually install the main dependencies with:
 ```bash
-pip install torch torchvision opencv-python open3d onnx onnxruntime-gpu
+pip install torch torchvision opencv-python open3d onnx onnxruntime-gpu onnxscript tensorrt-cu12==10.13.3.9 --extra-index-url https://pypi.nvidia.com/tensorrt-cu12-libs
+
 ```
 That should cover most of the required packages for running the demo.
 
@@ -139,7 +209,24 @@ For 'visualize_3d_middlebury.py --model_type XL ', result should be like below.
 </p>
 If you failed to reproduce this, let me know. 
 
-📜 Citation
+## 🚀 Model Optimization (ONNX / TensorRT)
+
+### 1. Export to ONNX (OPSET=18)
+
+Use export_onnx.py to convert the model to ONNX:
+
+```console
+python export_onnx.py --model_type $MODEL_TYPE --img_width $IMG_WIDHT --img_height $IMG_HEIGHT
+```
+### 2. Export to TensorRT (tested with 10.13.3)
+Use export_tensorrt.py to build a TensorRT engine:
+
+```console
+python export_tensorrt.py --model_type $MODEL_TYPE --img_width $IMG_WIDHT --img_height $IMG_HEIGHT --precision $PRECISION
+```
+Supported TensorRT precisions: fp32, tf32, fp16
+
+## 📜 Citation
 
 If you find our work useful for your research, please consider citing our paper:
 ```bibtex

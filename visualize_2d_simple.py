@@ -7,12 +7,11 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 from model.s2m2 import S2M2 as Model
 torch.backends.cudnn.benchmark = True
-torch.set_float32_matmul_precision('high')
 
 def get_args_parser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--model_type', default='L', type=str,
+    parser.add_argument('--model_type', default='S', type=str,
                         help='select model type: S,M,L,XL')
     parser.add_argument('--num_refine', default=3, type=int,
                         help='number of local iterative refinement')
@@ -76,11 +75,11 @@ def main(args):
     right = cv2.cvtColor(cv2.imread(right_path, cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
 
     img_height, img_width = left.shape[:2]
-    print(f"original image size: {img_height}, {img_width}")
+    print(f"original image size: img_height({img_height}), img_width({img_width})")
 
     img_height = (img_height // 32) * 32
     img_width = (img_width // 32) * 32
-    print(f"cropped image size: {img_height}, {img_width}")
+    print(f"cropped image size: img_height({img_height}), img_width({img_width})")
 
     # image crop
     left = left[:img_height, :img_width]
@@ -89,21 +88,12 @@ def main(args):
     left_torch = (torch.from_numpy(left).permute(-1, 0, 1).unsqueeze(0)).half().to(device)
     right_torch = (torch.from_numpy(right).permute(-1, 0, 1).unsqueeze(0)).half().to(device)
 
-    # from fvcore.nn import FlopCountAnalysis, flop_count_table
-    # # print(f"flops: {flops.total()}")
-    # with torch.inference_mode():
-    #     with torch.amp.autocast(enabled=True, device_type='cuda', dtype=torch.float16):
-    #         flops = FlopCountAnalysis(model, (left_torch, right_torch))
-    #         print(f"Gflops: {flops.total() / 1e9}")
-    # print(flop_count_table(flops))
-    #
-
 
     with torch.no_grad():
         with torch.amp.autocast(enabled=True, device_type=device.type, dtype=torch.bfloat16):
             print(f"pre-run...")
             _ = model(left_torch, right_torch)
-            T = 1
+            T = 10
             starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
             starter.record()
             for _ in range(T):
@@ -112,7 +102,6 @@ def main(args):
                 # WAIT FOR GPU SYNC
                 torch.cuda.synchronize()
             curr_time = starter.elapsed_time(ender)
-
     print(F"torch avg inference time:{(curr_time)/T/1000}, FPS:{1000*T/(curr_time)}")
 
     # opencv 2D visualization

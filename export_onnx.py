@@ -84,22 +84,21 @@ def main(args):
     right = cv2.cvtColor(cv2.imread(right_path, cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
 
 
-    img_height = (img_height // 32) * 32
-    img_width = (img_width // 32) * 32
     print(f"image size: {img_height}, {img_width}")
 
-    left = left[:img_height, :img_width]
-    right = right[:img_height, :img_width]
-    # left = cv2.resize(left, dsize=(img_width, img_height))
-    # right = cv2.resize(right, dsize=(img_width, img_height))
+    if left.shape[1]>=img_width and left.shape[0]>=img_height:
+        left = left[:img_height, :img_width]
+        right = right[:img_height, :img_width]
+    else:
+        left = cv2.resize(left, dsize=(img_width, img_height))
+        right = cv2.resize(right, dsize=(img_width, img_height))
 
     left_torch = (torch.from_numpy(left).permute(-1, 0, 1).unsqueeze(0)).to(device)
     right_torch = (torch.from_numpy(right).permute(-1, 0, 1).unsqueeze(0)).to(device)
 
     torch_version = torch.__version__
-    # onnx_path = f'S2M2_{args.model_type}_{img_width}_{img_height}_v2_torch{torch_version[0]}{torch_version[2]}.onnx'
-    onnx_path = os.path.join('onnx_save', f'S2M2_{args.model_type}_{img_width}_{img_height}_v2_torch{torch_version[0]}{torch_version[2]}.onnx')
 
+    onnx_path = os.path.join('onnx_save', f'S2M2_{args.model_type}_{img_width}_{img_height}_v2_torch{torch_version[0]}{torch_version[2]}.onnx')
     print(onnx_path)
     os.makedirs(os.path.dirname(onnx_path), exist_ok=True)
 
@@ -113,7 +112,8 @@ def main(args):
                           (left_torch, right_torch),
                           onnx_path,
                           export_params=True,
-                          opset_version=19,
+                          dynamo=True,
+                          opset_version=18,
                           verbose=True,
                           do_constant_folding=False,
                           input_names=['input_left', 'input_right'],

@@ -202,10 +202,10 @@ def main(args):
 
 
     img_height, img_width = left.shape[:2]
-    print(f"original image size: {img_height}, {img_width}")
+    print(f"original image size: img_height({img_height}), img_width({img_width})")
 
     img_height_pad, img_width_pad = left_torch_pad.shape[2:]
-    print(f"padded image size: {img_height_pad}, {img_width_pad}")
+    print(f"padded image size: img_height({img_height}), img_width({img_width})")
 
     with torch.no_grad():
         with torch.amp.autocast(enabled=True, device_type=device.type, dtype=torch.float16):
