@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=80.9", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "s2m2"
+version = "0.1.0"
+description = "Scalable Stereo Matching Model (ICCV2025)"
+authors = [{name = "Junhong Min", email = "junhong1.min@samsung.com"}]
+dependencies = [
+    "torch",
+    "opencv-python",
+    "numpy"
+]
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]

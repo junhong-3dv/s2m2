@@ -1,10 +1,8 @@
 <div align="center">
 
-<h1>S<sup>2</sup>M<sup>2</sup>: Scalable Stereo Matching Model for Reliable Depth Estimation</h1>
-
+<h3>S<sup>2</sup>M<sup>2</sup>: Scalable Stereo Matching Model for Reliable Depth Estimation (ICCV 2025)</h3>
 <h3>Junhong Min¹<sup>*</sup>, Youngpil Jeon¹, Jimin Kim¹, Minyong Choi¹</h3>  
 <p>¹Samsung Electronics, <sup>*</sup>Corresponding Author</p>  
-<p><strong>ICCV 2025</strong></p>
 
 <p align="center">
   <a href="https://arxiv.org/abs/2507.13229">
@@ -15,25 +13,23 @@
   </a>
 </p>
 
-<p align="center">
-  <img src="fig/thumbnail.png" width="90%">
-</p>
+[comment]: <> (<p align="center">)
+
+[comment]: <> (  <img src="fig/thumbnail.png" width="90%">)
+
+[comment]: <> (</p>)
 
 </div>
 
 ---
 
 ## 🤗 Notice
-
 >This repository and its contents are **not related to any official Samsung Electronics products**.  
 >All resources are provided **solely for non-commercial research and education purposes**.
 >
 ---
-
 ## ✨ Key Features
-
 ### 🧩 Model
-
 - Scalable stereo matching architecture  
 - State-of-the-art performance on ETH3D (1st), Middlebury V3 (1st), and Booster (1st)
 - Joint estimation of disparity, occlusion, and confidence
@@ -41,19 +37,12 @@
 - Optimal under the pinhole camera model with ideal stereo rectification (vertical disparity < 2px)
 
 ### ⚙️ Code
-
 - ✅ FP16 / FP32 inference
-- ✅ ONNX/TensorRT export
+- ✅ TorchScript/ONNX/TensorRT export
+- ✅ online stereo calibration
+- ❌ Training pipeline (not included)
 
 > Note: This implementation replaces the dynamic attention-based refinement module with an UNet for stable ONNX export. It also includes an additional M variant and extended training data with transparent objects. 
-
----
-
-## 🏛️ Model Architecture
-
-<p align="center">
-  <img src="fig/overview.png" width="90%">
-</p>
 
 ---
 
@@ -146,11 +135,12 @@ Inference Speed (FPS)** on **NVIDIA RTX 5090 (float16 + `refine_iter=3`):
 We recommend using Python 3.10, PyTorch 2.9, CUDA 12.9, CUDNN 9.1.0, and tensorRT 10.13.3 with Anaconda.
 
 ```bash
-git clone https://github.com/junhong-3dv/s2m2.git
-cd s2m2
+git clone https://github.sec.samsung.net/junhong1-min/s2m2_release
+cd s2m2_release
 
 conda env create -n s2m2 -f environment.yml
 conda activate s2m2
+pip install -e .
 ```
 
 
@@ -169,7 +159,8 @@ That should cover most of the required packages for running the demo.
 Create a directory for weights and download the desired models from the links below.
 
 ```bash
-mkdir pretrain_weights
+mkdir weights
+mkdir weights/pretrain_weights
 ```
 
 | Model | Download | Model Size |
@@ -180,10 +171,10 @@ mkdir pretrain_weights
 | **XL**| [Download](https://huggingface.co/minimok/s2m2/resolve/main/CH384NTR3.pth) | 406M | 
 
 ### 2. Run Basic Demo
-To generate a result for a single input, run `visualize_2d_simple.py`.
+To generate a result for a single input, run `demo/visualize_2d_simple.py`.
 
 ```bash
-python visualize_2d_simple.py --model_type XL --num_refine 3 
+python ./demo/visualize_2d_simple.py --model_type XL --num_refine 3 
 ```
 | arg | default | type | help |
 | :---: | :---: | :--: | :--: |
@@ -195,10 +186,10 @@ python visualize_2d_simple.py --model_type XL --num_refine 3
 
 ### 3. Run 3D Visualization Demo
 
-To visualize the 3D output interactively, run `visualize_3d_booster.py` or `visualize_3d_middlebury.py`
+To visualize the 3D output interactively, run `demo/visualize_3d_booster.py` or `demo/visualize_3d_middlebury.py`
 
 ```bash
-python visualize_3d_booster.py --model_type L 
+python ./demo/visualize_3d_booster.py --model_type L 
 ```
 For 'visualize_3d_middlebury.py --model_type XL ', result should be like below. 
 <p align="center">
@@ -213,13 +204,17 @@ If you failed to reproduce this, let me know.
 Use export_onnx.py to convert the model to ONNX:
 
 ```console
-python export_onnx.py --model_type $MODEL_TYPE --img_width $IMG_WIDHT --img_height $IMG_HEIGHT
+python demo/export_onnx.py --model_type $MODEL_TYPE --img_width $IMG_WIDHT --img_height $IMG_HEIGHT
 ```
 ### 2. Export to TensorRT (tested with 10.13.3)
 Use export_tensorrt.py to build a TensorRT engine:
 
 ```console
-python export_tensorrt.py --model_type $MODEL_TYPE --img_width $IMG_WIDHT --img_height $IMG_HEIGHT --precision $PRECISION
+python demo/export_tensorrt.py --model_type $MODEL_TYPE --img_width $IMG_WIDHT --img_height $IMG_HEIGHT --precision $PRECISION
+```
+or simply in the terminal
+```console
+trtexec --onnx={onnx_file_path} --saveEngine=./{trt_file_path} --fp16 --precisionConstraints=obey --layerPrecisions=node_linalg_vector_norm_2:fp32
 ```
 Supported TensorRT precisions: fp32, tf32, fp16
 
