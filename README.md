@@ -39,7 +39,6 @@
 ### ⚙️ Code
 - ✅ FP16 / FP32 inference
 - ✅ TorchScript/ONNX/TensorRT export
-- ✅ online stereo calibration
 - ❌ Training pipeline (not included)
 
 > Note: This implementation replaces the dynamic attention-based refinement module with an UNet for stable ONNX export. It also includes an additional M variant and extended training data with transparent objects. 
