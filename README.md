@@ -135,8 +135,8 @@ Inference Speed (FPS)** on **NVIDIA RTX 5090 (float16 + `refine_iter=3`):
 We recommend using Python 3.10, PyTorch 2.9, CUDA 12.9, CUDNN 9.1.0, and tensorRT 10.13.3 with Anaconda.
 
 ```bash
-git clone https://github.sec.samsung.net/junhong1-min/s2m2_release
-cd s2m2_release
+git clone https://github.com/junhong-3dv/s2m2
+cd s2m2
 
 conda env create -n s2m2 -f environment.yml
 conda activate s2m2
