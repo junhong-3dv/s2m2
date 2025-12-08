@@ -137,9 +137,12 @@ We recommend using Python 3.10, PyTorch 2.9, CUDA 12.9, CUDNN 9.1.0, and tensorR
 ```bash
 git clone https://github.com/junhong-3dv/s2m2
 cd s2m2
-
+```
+```bash
 conda env create -n s2m2 -f environment.yml
 conda activate s2m2
+```
+```bash
 pip install -e .
 ```
 
