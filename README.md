@@ -18,13 +18,12 @@
 
 </div>
 
----
 
 ## 🤗 Notice
 >This repository and its contents are **not related to any official Samsung Electronics products**.  
 >All resources are provided **solely for non-commercial research and education purposes**.
->
 ---
+
 ## ✨ Key Features
 ### 🧩 Model
 - Scalable stereo matching architecture  
