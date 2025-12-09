@@ -1,9 +1,6 @@
 <div align="center">
-
 <h3>S<sup>2</sup>M<sup>2</sup>: Scalable Stereo Matching Model for Reliable Depth Estimation (ICCV 2025)</h3>
-<h3>Junhong Min¹<sup>*</sup>, Youngpil Jeon¹, Jimin Kim¹, Minyong Choi¹</h3>  
-<p>¹Samsung Electronics, <sup>*</sup>Corresponding Author</p>  
-
+<h5>Junhong Min¹<sup>*</sup>, Youngpil Jeon¹, Jimin Kim¹, Minyong Choi¹</h5>
 <p align="center">
   <a href="https://arxiv.org/abs/2507.13229">
     <img alt="Paper" src="https://img.shields.io/badge/Paper-arXiv%3A2507.13229-b31b1b?style=for-the-badge&logo=arxiv">
