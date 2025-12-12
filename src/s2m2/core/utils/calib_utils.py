@@ -2,9 +2,9 @@
 import numpy as np
 import cv2
 from scipy.spatial.transform import Rotation as R
-import numpy as np
-import os 
+import os
 from .xml_calibration_reader import load_calibration_from_xml
+import xml.etree.ElementTree as ET
 
 def load_calibration_data(calib_xml_path):
     """load calibration data"""
@@ -175,12 +175,6 @@ def test_delta_rotation():
     print(new_R)
 
     return delta_R
-
-
-import xml.etree.ElementTree as ET
-import numpy as np
-import cv2
-from scipy.spatial.transform import Rotation as R
 
 
 def parse_xml_calibration(calib_xml_path):
