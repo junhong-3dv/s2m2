@@ -108,11 +108,11 @@ class S2M2(nn.Module):
         x_unfold = custom_unfold(x.reshape(b, c, h, w), 3, 1) # onnx compatible
         x_unfold = F.interpolate(x_unfold, (h * 4, w * 4), mode='nearest').reshape(b, 9, h * 4, w * 4)
         up_weights = up_weights.softmax(dim=1)
-        eps = 0.1
+        eps = 0.0
 
-        up_weights = (up_weights - eps).clamp(min=0)
-        norm = up_weights.sum(dim=1, keepdim=True)
-        up_weights = (up_weights/norm)
+        # up_weights = (up_weights - eps).clamp(min=0)
+        # norm = up_weights.sum(dim=1, keepdim=True)
+        # up_weights = (up_weights/norm)
 
         x_up = (x_unfold * up_weights).sum(1, keepdim=True)
 
@@ -133,10 +133,10 @@ class S2M2(nn.Module):
 
         else:
             filter_weights = filter_weights.softmax(dim=1)
-        eps=0.1
-        filter_weights = (filter_weights - eps).clamp(min=0)
-        norm = filter_weights.sum(dim=1, keepdim=True)
-        filter_weights = (filter_weights/norm)
+        # eps=0.0
+        # filter_weights = (filter_weights - eps).clamp(min=0)
+        # norm = filter_weights.sum(dim=1, keepdim=True)
+        # filter_weights = (filter_weights/norm)
 
         disp_out = (disp_unfold * filter_weights).sum(1, keepdim=True)
         return disp_out
