@@ -17,8 +17,8 @@ class CostVolume():
 
         b, h, w, w2 = cv.shape
         self.cv = cv.reshape(b * h * w, 1, 1, w2)
-        self.cv_2x = F.interpolate(cv_2x.permute(0,3,1,2), scale_factor=2)\
-            .permute(0,2,3,1).reshape(b * h * w, 1, 1, w2//2)
+        self.cv_2x = F.avg_pool2d(self.cv, kernel_size=[1,2])
+
 
         self.coords = coords.reshape(b * h * w, 1, 1, 1)
 
@@ -195,9 +195,6 @@ class DispInit(nn.Module):
 
         feature0, feature1 = self.layer_norm(feature.permute(0, 2, 3, 1)).chunk(2, dim=0)
         cv = torch.einsum('...hic,...hjc -> ...hij', feature0, feature1)
-        feature0_down, feature1_down = F.interpolate(feature0.permute(0, 3, 1, 2), scale_factor=1 / 2), \
-                                       F.interpolate(feature1.permute(0, 3, 1, 2), scale_factor=1 / 2)
-        cv_down = torch.einsum('...chi,...chj -> ...hij', feature0_down, feature1_down).to(dtype)
 
 
         # cv_mask = cv.masked_fill(mask, -torch.inf)
@@ -223,6 +220,6 @@ class DispInit(nn.Module):
         conf = conf.unsqueeze(1).squeeze(-1)
         occ = masked_prob.sum(dim=3).unsqueeze(1)
 
-        return disparity, conf, occ, cv, cv_down
+        return disparity, conf, occ, cv
 
 
