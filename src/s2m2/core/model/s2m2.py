@@ -108,11 +108,6 @@ class S2M2(nn.Module):
         x_unfold = custom_unfold(x.reshape(b, c, h, w), 3, 1) # onnx compatible
         x_unfold = F.interpolate(x_unfold, (h * 4, w * 4), mode='nearest').reshape(b, 9, h * 4, w * 4)
         up_weights = up_weights.softmax(dim=1)
-        eps = 0.0
-
-        # up_weights = (up_weights - eps).clamp(min=0)
-        # norm = up_weights.sum(dim=1, keepdim=True)
-        # up_weights = (up_weights/norm)
 
         x_up = (x_unfold * up_weights).sum(1, keepdim=True)
 
@@ -133,10 +128,6 @@ class S2M2(nn.Module):
 
         else:
             filter_weights = filter_weights.softmax(dim=1)
-        # eps=0.0
-        # filter_weights = (filter_weights - eps).clamp(min=0)
-        # norm = filter_weights.sum(dim=1, keepdim=True)
-        # filter_weights = (filter_weights/norm)
 
         disp_out = (disp_unfold * filter_weights).sum(1, keepdim=True)
         return disp_out
@@ -159,7 +150,7 @@ class S2M2(nn.Module):
         feature_tr_4x = self.transformer(feature_py_4x, feature_py_8x, feature_py_16x, feature_py_32x)
 
         # Initial disparity/confidence/occlusion estimation
-        disp, conf, occ, cv, cv_down = self.disp_init(feature_tr_4x)
+        disp, conf, occ, cv = self.disp_init(feature_tr_4x)
 
         feature0_tr_4x, feature1_tr_4x = feature_tr_4x.chunk(2, dim=0)
         feature0_py_4x, feature1_py_4x = feature_py_4x.chunk(2, dim=0)
@@ -179,7 +170,7 @@ class S2M2(nn.Module):
         # b = torch.Tensor([b])
         # h = torch.Tensor([h])
         coords_4x = torch.arange(w, device=feature0_fusion_4x.device, dtype=torch.float32).to(feature0_fusion_4x.dtype)
-        cv_fn = CostVolume(cv, cv_down, coords_4x.reshape(1, 1, w, 1).repeat(b, h, 1, 1), radius=4)
+        cv_fn = CostVolume(cv, coords_4x.reshape(1, 1, w, 1).repeat(b, h, 1, 1), radius=4)
 
         for itr in range(self.refine_iter):
             hidden, disp, conf, occ = self.refiner(hidden, ctx0, disp, conf, occ, cv_fn)
