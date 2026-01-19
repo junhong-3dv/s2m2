@@ -8,7 +8,7 @@ class CostVolume():
     """
     cost volume for iterative refinemtns
     """
-    def __init__(self, cv: Tensor, cv_2x: Tensor, coords: Tensor, radius: int):
+    def __init__(self, cv: Tensor, coords: Tensor, radius: int):
         self.radius = radius
 
         r = self.radius
