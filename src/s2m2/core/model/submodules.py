@@ -12,7 +12,7 @@ def bilinear_sampler(img, coords, mode='bilinear'):
     xgrid = 2 * xgrid / (W - 1) - 1
     ygrid = 2 * ygrid / (H - 1) - 1
     grid = torch.cat([xgrid, ygrid], dim=-1)
-    out = F.grid_sample(img, grid, mode=mode, align_corners=False)
+    out = F.grid_sample(img, grid, mode=mode, align_corners=True)
 
     return out
 
