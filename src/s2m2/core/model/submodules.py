@@ -2,7 +2,19 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
-from .utils import bilinear_sampler
+
+
+def bilinear_sampler(img, coords, mode='bilinear'):
+    """ Wrapper for grid_sample, uses pixel coordinates """
+    W = torch.tensor(img.shape[-1], dtype=img.dtype, device=img.device)
+    H = torch.tensor(img.shape[-2], dtype=img.dtype, device=img.device)
+    xgrid, ygrid = coords.split([1,1], dim=-1)
+    xgrid = 2 * xgrid / (W - 1) - 1
+    ygrid = 2 * ygrid / (H - 1) - 1
+    grid = torch.cat([xgrid, ygrid], dim=-1)
+    out = F.grid_sample(img, grid, mode=mode, align_corners=False)
+
+    return out
 
 class CostVolume():
     """
@@ -19,6 +31,8 @@ class CostVolume():
         self.cv = cv.reshape(b * h * w, 1, 1, w2)
         self.cv_2x = F.avg_pool2d(self.cv, kernel_size=[1,2])
 
+        self.cv = self.cv.reshape(b * h, 1, w, w2)
+        self.cv_2x = self.cv_2x.reshape(b * h, 1, w, w2//2)
 
         self.coords = coords.reshape(b * h * w, 1, 1, 1)
 
@@ -26,19 +40,25 @@ class CostVolume():
         b, _, h, w = disp.shape
         dx = self.dx
         x0 = self.coords - disp.reshape(b * h * w, 1, 1, 1) + dx
-        y0 = 0 * x0
+        x0 = x0.reshape(b * h, w, -1, 1)
+        y0 = self.coords + 0 * dx
+        y0 = y0.reshape(b * h, w, -1, 1)
+
         init_coords_lvl = torch.cat([x0, y0], dim=-1)
         corrs = bilinear_sampler(self.cv, init_coords_lvl)
         corrs = corrs.reshape(b, h, w, 2*self.radius+1).permute(0, 3, 1, 2)
 
         dx = self.dx
         x0 = self.coords / 2 - disp.reshape(b * h * w, 1, 1, 1) / 2 + dx
-        y0 = 0 * x0
+        x0 = x0.reshape(b*h,w,-1, 1)
+        y0 = self.coords + 0 * dx
+        y0 = y0.reshape(b*h,w,-1, 1)
         init_coords_lvl = torch.cat([x0, y0], dim=-1)
         corrs_2x = bilinear_sampler(self.cv_2x, init_coords_lvl)
         corrs_2x = corrs_2x.reshape(b, h, w, 2*self.radius+1).permute(0, 3, 1, 2)
 
         return corrs, corrs_2x
+
 
 class CNNEncoder(nn.Module):
     """
