@@ -27,15 +27,6 @@ def coords_grid(b, h, w, device):
 
     return grid.to(device)
 
-def bilinear_sampler(img, coords, mode='bilinear'):
-    """ Wrapper for grid_sample, uses pixel coordinates """
-    W = torch.tensor(img.shape[-1], dtype=img.dtype, device=img.device)
-    xgrid, ygrid = coords.split([1,1], dim=-1)
-    xgrid = 2*xgrid/(W-1) - 1
-    grid = torch.cat([xgrid, ygrid], dim=-1)
-    out = F.grid_sample(img, grid, mode=mode, align_corners=False)
-
-    return out
 
 
 def get_pe(h: int, w: int, pe_dim: int, dtype: str, device: str):
