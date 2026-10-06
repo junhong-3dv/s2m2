@@ -29,7 +29,12 @@ class CostVolume():
 
         b, h, w, w2 = cv.shape
         self.cv = cv.reshape(b * h * w, 1, 1, w2)
-        self.cv_2x = F.avg_pool2d(self.cv, kernel_size=[1,2])
+        # Equivalent to F.avg_pool2d(self.cv, kernel_size=[1, 2]), but without a
+        # pooling layer. self.cv is [b*h*w, 1, 1, w2], so its batch dimension is
+        # the quarter-resolution pixel count; above 65,536 TensorRT cannot build
+        # the pooling layer and engine construction fails. See NVIDIA/TensorRT#4866.
+        _n, _c, _h, _w2 = self.cv.shape
+        self.cv_2x = self.cv.reshape(_n, _c, _h, _w2 // 2, 2).mean(dim=-1)
 
         self.cv = self.cv.reshape(b * h, 1, w, w2)
         self.cv_2x = self.cv_2x.reshape(b * h, 1, w, w2//2)
