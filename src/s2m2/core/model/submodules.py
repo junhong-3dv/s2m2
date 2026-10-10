@@ -6,12 +6,18 @@ from torch import Tensor
 
 def bilinear_sampler(img, coords, mode='bilinear'):
     """ Wrapper for grid_sample, uses pixel coordinates """
-    W = torch.tensor(img.shape[-1], dtype=img.dtype, device=img.device)
-    H = torch.tensor(img.shape[-2], dtype=img.dtype, device=img.device)
-    xgrid, ygrid = coords.split([1,1], dim=-1)
+    # grid in fp32: in fp16 the normalised coordinates are off by up to ~0.1 px / row at w ~ 370
+    W = torch.tensor(img.shape[-1], dtype=torch.float32, device=img.device)
+    H = torch.tensor(img.shape[-2], dtype=torch.float32, device=img.device)
+    xgrid, ygrid = coords.float().split([1,1], dim=-1)
+    # sample x at x * W / (W - 1) - 0.5: the lookup the released weights were trained with
+    # (before cb59d61: x normalised by (W - 1) and sampled with align_corners=False)
+    xgrid = xgrid * W / (W - 1) - 0.5
     xgrid = 2 * xgrid / (W - 1) - 1
     ygrid = 2 * ygrid / (H - 1) - 1
     grid = torch.cat([xgrid, ygrid], dim=-1)
+    if not torch.is_autocast_enabled(img.device.type):
+        grid = grid.to(img.dtype)  # grid_sample needs matching dtypes; under autocast it runs in fp32 itself
     out = F.grid_sample(img, grid, mode=mode, align_corners=True)
 
     return out
