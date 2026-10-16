@@ -206,9 +206,9 @@ class DispInit(nn.Module):
         # sinkhorn
         attn = self._sinkhorn(attn, log_mu, log_nu)
         # convert back from log space, recover probabilities by normalization 2W
-        w_tensor = torch.tensor(w, dtype=dtype,device=attn.device)
+        w_tensor = torch.tensor(w, dtype=torch.float32,device=attn.device)
         log_const = torch.log(2*w_tensor)
-        attn = (attn[:, :, :-1, :-1] + log_const).exp().to(dtype)
+        attn = (attn[:, :, :-1, :-1].float() + log_const).exp()
         return attn
 
     def forward(self,
@@ -218,7 +218,7 @@ class DispInit(nn.Module):
         dtype = feature.dtype
         device = feature.device
         w = feature.shape[-1]
-        x_grid = torch.linspace(0, w - 1, w, device=device, dtype=feature.dtype)
+        x_grid = torch.linspace(0, w - 1, w, device=device, dtype=torch.float32)
         if self.use_positivity:
             mask = torch.triu(torch.ones((w, w), dtype=torch.bool, device=device), diagonal=1)
         else:
