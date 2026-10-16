@@ -169,7 +169,8 @@ class S2M2(nn.Module):
         # w = torch.Tensor([w])
         # b = torch.Tensor([b])
         # h = torch.Tensor([h])
-        coords_4x = torch.arange(w, device=feature0_fusion_4x.device, dtype=torch.float32).to(feature0_fusion_4x.dtype)
+        # FP16 cannot represent every integer above 2048; keep lookup rows exact.
+        coords_4x = torch.arange(w, device=feature0_fusion_4x.device, dtype=torch.float32)
         cv_fn = CostVolume(cv, coords_4x.reshape(1, 1, w, 1).repeat(b, h, 1, 1), radius=4)
 
         for itr in range(self.refine_iter):
